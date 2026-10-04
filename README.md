@@ -1,55 +1,68 @@
-# MMA301 Assignment 1 — Profile & Activity App
+# MMA301 — Bài tập 1: Ứng dụng hồ sơ và hoạt động
 
-Current milestone: **M0 — Expo Bootstrap & Environment Baseline** (internal learning milestone before M1).
+Giai đoạn hiện tại: **M0 — Khởi tạo Expo và kiểm tra môi trường**. Đây là bước học tập nội bộ trước khi bắt đầu M1 của bài tập.
 
-Tech baseline: **JavaScript + React Native + Expo**. The app currently displays only:
+Dự án sử dụng **JavaScript + React Native + Expo**. Hiện tại, ứng dụng chỉ có hai dòng chữ để kiểm tra giao diện cơ bản. Nội dung trong `App.js` là:
 
-- MMA301 Assignment 1
-- React Native + Expo baseline
+```text
+MMA301 Assignment 1
+React Native + Expo baseline
+```
 
-No navigation or assignment features are implemented yet.
+Chưa có chức năng chuyển màn hình hay các chức năng khác của bài tập.
 
-## Prerequisites
+## Cần chuẩn bị những gì?
 
-- Node.js LTS and npm. M0 was tested with Node `v24.15.0` and npm `11.12.1` on Windows.
-- Git.
-- To view the native app: an Android/iOS device with an Expo Go version compatible with this project's Expo SDK 57, or a configured emulator/simulator.
-- Phone and computer should be on the same network when using the default LAN connection.
+- Node.js bản LTS (bản được hỗ trợ dài hạn) và npm. M0 đã được kiểm tra trên Windows với Node `v24.15.0` và npm `11.12.1`.
+- Git để quản lý lịch sử thay đổi mã nguồn.
+- Để xem ứng dụng: điện thoại Android/iOS có Expo Go tương thích với Expo SDK 57, hoặc máy ảo Android/iOS đã được cấu hình.
+- Nếu dùng kết nối mạng nội bộ mặc định, điện thoại và máy tính nên kết nối cùng một mạng.
 
-## Install and run
+## Cài đặt và chạy ứng dụng
 
-Run these commands from the repository root:
+Mở cửa sổ dòng lệnh tại thư mục gốc của dự án, tức thư mục chứa `package.json`, rồi chạy:
 
 ```sh
 npm install
 npm start
 ```
 
-Expo starts Metro and shows a QR code. Scan it using Expo Go on Android or the Camera app on iOS. Keep the terminal running; press `Ctrl+C` to stop.
+- `npm install`: tải các thư viện mà dự án cần vào thư mục `node_modules/`.
+- `npm start`: chạy công cụ phát triển của Expo và khởi động Metro.
 
-Edit `App.js` and save to update the app. `npm run android` requires a configured Android emulator or connected device. `npm run ios` requires macOS and an iOS simulator; Windows users can use Expo Go on a physical iPhone instead.
+Expo sẽ hiển thị mã QR. Trên Android, quét bằng Expo Go; trên iPhone, quét bằng ứng dụng Camera. Giữ cửa sổ dòng lệnh mở trong lúc dùng ứng dụng. Nhấn `Ctrl+C` khi muốn dừng.
 
-If a phone cannot connect, check the network and firewall. If Expo Go reports an SDK mismatch, check its compatibility with SDK 57 at https://expo.dev/go before changing dependencies.
+Bạn có thể sửa nội dung trong `App.js` rồi lưu để cập nhật ứng dụng đang kết nối.
 
-## Basic structure
+- `npm run android`: cần máy ảo Android hoặc điện thoại đã được cấu hình kết nối với máy tính.
+- `npm run ios`: cần macOS và máy ảo iOS. Nếu dùng Windows, bạn có thể mở ứng dụng bằng Expo Go trên iPhone thật.
+
+Nếu điện thoại không kết nối được, kiểm tra mạng và tường lửa. Nếu Expo Go báo không tương thích phiên bản SDK, xem [trang tải và thông tin tương thích Expo Go](https://expo.dev/go) trước khi thay đổi thư viện.
+
+## Các tệp và thư mục chính
 
 ```text
 mma301-assignment1/
-├── App.js                 # Root component: the two baseline text lines
-├── index.js               # Registers App with Expo
-├── package.json           # Dependencies, npm scripts, and entry point
-├── package-lock.json      # Resolved dependency versions; commit this file
-├── app.json               # App name, slug, platform settings, asset paths
-├── assets/                # Expo template icons
-├── docs/AI_USAGE_LOG.md    # AI assistance and actual verification evidence
-├── .gitignore             # Excludes dependencies and generated/local files
-├── LICENSE                # License supplied with the Expo template
-└── node_modules/          # Installed packages; generated locally, not committed
+├── App.js                 # Thành phần giao diện gốc, hiển thị hai dòng chữ
+├── index.js               # Đăng ký App để Expo có thể chạy ứng dụng
+├── package.json           # Danh sách thư viện, các lệnh chạy và tệp khởi đầu
+├── package-lock.json      # Ghi phiên bản thư viện đã cài; cần đưa vào Git
+├── app.json               # Tên ứng dụng, cấu hình nền tảng và đường dẫn ảnh
+├── assets/                # Chứa các ảnh biểu tượng từ mẫu Expo
+├── docs/AI_USAGE_LOG.md    # Nhật ký sử dụng AI và bằng chứng kiểm tra
+├── .gitignore             # Chỉ định những tệp, thư mục không đưa vào Git
+├── LICENSE                # Giấy phép sử dụng đi kèm mẫu Expo
+└── node_modules/          # Thư viện đã tải về máy; không đưa vào Git
 ```
 
-`npm` installs packages and runs scripts. `Expo` supplies the development tools and native integration. `Metro` converts and serves JavaScript for the native app.
+- **React Native** giúp xây dựng giao diện ứng dụng Android/iOS bằng JavaScript và React.
+- **Expo** cung cấp công cụ để tạo, cấu hình và chạy dự án React Native.
+- **npm** giúp cài thư viện và chạy các lệnh được khai báo trong `package.json`.
+- **Metro** xử lý mã nguồn JavaScript cùng các thư viện thành một gói mã nguồn để ứng dụng trên thiết bị có thể tải và chạy.
 
-## M0 verification
+## Kiểm tra dự án ở M0
+
+Các lệnh kiểm tra cấu hình và thư viện:
 
 ```sh
 npx expo config --type public
@@ -57,6 +70,8 @@ npx expo install --check
 npx expo-doctor
 ```
 
-Actual results and device-testing limitations are recorded in `docs/AI_USAGE_LOG.md`. Starting Metro and successfully bundling JavaScript do not establish that the app has been visually tested on a phone.
+Kết quả thực tế đã được ghi trong [nhật ký sử dụng AI](docs/AI_USAGE_LOG.md). Việc Metro khởi động và tạo được gói JavaScript chưa chứng minh rằng giao diện đã hiển thị đúng trên điện thoại.
 
-References: [Expo project templates](https://docs.expo.dev/more/create-expo/) and [Expo development workflow](https://docs.expo.dev/workflow/overview/).
+M0 đã kiểm tra cấu hình, tính tương thích của thư viện và việc tạo gói JavaScript cho Android/iOS. Chưa kiểm tra giao diện trên thiết bị thật hoặc máy ảo. Kiểm tra bảo mật thư viện vẫn còn 23 cảnh báo; chi tiết nằm trong nhật ký.
+
+Tài liệu tham khảo: [Các mẫu dự án Expo](https://docs.expo.dev/more/create-expo/) và [Cách phát triển ứng dụng bằng Expo](https://docs.expo.dev/workflow/overview/).
