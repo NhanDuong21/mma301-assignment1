@@ -120,3 +120,33 @@ Người học yêu cầu chuyển README và các tệp Markdown trong `docs/` 
 - Nguyên nhân: AI gộp thao tác xóa và tạo lại cùng đường dẫn trong một bản vá, trong khi công cụ không hỗ trợ cách gọi này.
 - Cách sửa: tách thành các bản vá hợp lệ rồi ghi lại hai tài liệu.
 - Kiểm tra lại: nội dung tiếng Việt đã được ghi thành công; các bước kiểm tra tài liệu bên trên đều đạt.
+
+## 04/10/2026 — Thống nhất quy ước đặt tên tệp
+
+### Nhiệm vụ và mục đích
+
+Người học hỏi về quy ước `.js` và `.jsx`, đồng thời yêu cầu bài tập sử dụng cách đặt tên thống nhất. Mục đích là nhận biết nhanh tệp giao diện và tệp xử lý JavaScript.
+
+### Nội dung AI đã tạo và điều chỉnh
+
+- Tham khảo [hướng dẫn đặt tên React của Airbnb](https://github.com/airbnb/javascript/tree/master/react#naming): tệp thành phần giao diện dùng `.jsx` và `PascalCase`.
+- Đổi `App.js` thành `App.jsx`, giữ nguyên nội dung bên trong.
+- Giữ `index.js` vì tệp này không chứa JSX. Dòng `import App from './App'` không ghi đuôi tệp; việc kiểm tra thực tế xác nhận Metro tìm được `App.jsx`.
+- Cập nhật tên tệp hiện tại và phần quy ước đặt tên trong README. Các tệp JavaScript tự đặt không chứa JSX dùng `.js` và `camelCase`; tên cấu hình giữ theo công cụ.
+- Đây là quy ước được chọn cho bài tập, không phải chuẩn bắt buộc duy nhất của React Native. Không cài thêm thư viện, không bắt đầu M1.
+- Các mục nhật ký trước vẫn nhắc `App.js` vì đó là tên thật tại thời điểm kiểm tra trước đây.
+
+### Cách kiểm chứng
+
+- So sánh nội dung `App.jsx` với `App.js` trong Git trước khi đổi tên: giống nhau.
+- Chạy `npm start -- --localhost --port 8082` với `CI=1` riêng trong phiên kiểm tra: Metro khởi động thành công.
+- Yêu cầu gói JavaScript Android và iOS: cả hai trả HTTP 200, chứa tên `App.jsx` và hai dòng chữ của giao diện.
+- Chạy `git diff --check`: không có lỗi khoảng trắng.
+- Chưa kiểm tra giao diện trên điện thoại hoặc máy ảo; lần kiểm tra này xác nhận việc tìm tệp và tạo gói JavaScript sau đổi tên.
+
+### Vấn đề gặp trong lệnh kiểm tra
+
+- Biểu hiện: lệnh PowerShell đầu tiên bị lỗi phân tích cú pháp trước khi thực hiện kiểm tra.
+- Nguyên nhân gốc: AI viết biến `$namePlatform` ngay trước dấu `:` trong chuỗi; PowerShell hiểu nhầm đó là cú pháp biến có phạm vi.
+- Cách sửa: dùng `${namePlatform}` để phân định rõ tên biến.
+- Kiểm tra lại: lệnh chạy thành công, nội dung tệp không đổi và cả hai gói Android/iOS đều đạt. Đây là lỗi của lệnh kiểm tra do AI viết, không phải lỗi ứng dụng.
