@@ -1,19 +1,23 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { useContext } from 'react';
+import { StyleSheet, Text } from 'react-native';
+
+import ScreenContainer from '../components/ScreenContainer';
+import ThemeToggle from '../components/ThemeToggle';
+import { ThemeContext } from '../context/ThemeContext';
 
 export default function SettingsScreen() {
+  const { colors } = useContext(ThemeContext);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Settings</Text>
-      <Text>Các tùy chọn cài đặt sẽ được bổ sung ở giai đoạn sau.</Text>
-    </View>
+    <ScreenContainer>
+      <Text style={[styles.title, { color: colors.text }]}>Settings</Text>
+      <Text style={{ color: colors.secondaryText }}>Đổi chế độ hiển thị bằng công tắc bên dưới.</Text>
+      <ThemeToggle />
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',

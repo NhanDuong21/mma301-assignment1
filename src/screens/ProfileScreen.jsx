@@ -1,10 +1,16 @@
+import { useContext } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 
+import ScreenContainer from '../components/ScreenContainer';
+import { ThemeContext } from '../context/ThemeContext';
+
 export default function ProfileScreen({ navigation }) {
+  const { colors } = useContext(ThemeContext);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Profile</Text>
-      <Text>Thông tin hồ sơ sẽ được bổ sung ở giai đoạn sau.</Text>
+    <ScreenContainer>
+      <Text style={[styles.title, { color: colors.text }]}>Profile</Text>
+      <Text style={{ color: colors.secondaryText }}>Thông tin hồ sơ sẽ được bổ sung ở giai đoạn sau.</Text>
 
       <View style={styles.button}>
         <Button
@@ -12,15 +18,11 @@ export default function ProfileScreen({ navigation }) {
           onPress={() => navigation.navigate('EditProfile')}
         />
       </View>
-    </View>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',

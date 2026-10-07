@@ -1,10 +1,16 @@
+import { useContext } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 
+import ScreenContainer from '../components/ScreenContainer';
+import { ThemeContext } from '../context/ThemeContext';
+
 export default function HomeScreen({ navigation }) {
+  const { colors } = useContext(ThemeContext);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>MMA301 Assignment 1</Text>
-      <Text>Chọn một màn hình để khám phá ứng dụng.</Text>
+    <ScreenContainer>
+      <Text style={[styles.title, { color: colors.text }]}>MMA301 Assignment 1</Text>
+      <Text style={{ color: colors.secondaryText }}>Chọn một màn hình để khám phá ứng dụng.</Text>
 
       <View style={styles.button}>
         <Button
@@ -24,15 +30,11 @@ export default function HomeScreen({ navigation }) {
           onPress={() => navigation.navigate('Settings')}
         />
       </View>
-    </View>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',

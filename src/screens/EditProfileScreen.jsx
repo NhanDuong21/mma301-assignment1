@@ -1,23 +1,25 @@
+import { useContext } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 
+import ScreenContainer from '../components/ScreenContainer';
+import { ThemeContext } from '../context/ThemeContext';
+
 export default function EditProfileScreen({ navigation }) {
+  const { colors } = useContext(ThemeContext);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Edit Profile</Text>
-      <Text>Biểu mẫu chỉnh sửa hồ sơ chưa được triển khai ở M1.</Text>
+    <ScreenContainer>
+      <Text style={[styles.title, { color: colors.text }]}>Edit Profile</Text>
+      <Text style={{ color: colors.secondaryText }}>Biểu mẫu chỉnh sửa hồ sơ chưa được triển khai ở M2.</Text>
 
       <View style={styles.button}>
         <Button title="Quay lại hồ sơ" onPress={() => navigation.goBack()} />
       </View>
-    </View>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',

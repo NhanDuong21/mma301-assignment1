@@ -242,3 +242,73 @@ Các kiểm tra logic L01–L10 đều đạt: Home khởi đầu; các nút th�
 - Kiểm tra lại → cả gói Android/iOS đều có đủ màn hình và chữ yêu cầu. Đây là lỗi trong cách kiểm tra do AI viết, không phải lỗi ứng dụng.
 
 Chưa quan sát thấy lỗi thật của mã nguồn ứng dụng trong phạm vi kiểm tra M1. Các giới hạn trên thiết bị và cảnh báo thư viện được giữ lại rõ ràng.
+
+## 07/10/2026 — M2: Giao diện dùng chung và Context chia sẻ theme
+
+### Nhiệm vụ, mục đích và tài liệu tham khảo
+
+- Yêu cầu của người học: thêm chế độ sáng/tối bằng Context, Settings đổi theme, cả năm màn hình và thanh tiêu đề dùng chung theme; ít nhất hai component dùng chung; giữ luồng M1 và không làm M3–M5.
+- Mục đích: học state, hàm cập nhật state, Provider, thành phần đọc Context, `children` và cách tách bố trí lặp lại.
+- State chỉ nằm trong bộ nhớ. Không dùng AsyncStorage, lưu dữ liệu hoặc Context hồ sơ. Khởi động lại hoàn toàn trở về Light là kết quả đúng của M2.
+- Tài liệu: [useState](https://react.dev/reference/react/useState), [useContext](https://react.dev/reference/react/useContext), [createContext](https://react.dev/reference/react/createContext), [children và props](https://react.dev/learn/passing-props-to-a-component), [theme điều hướng](https://reactnavigation.org/docs/themes/).
+
+### Thiết kế trước khi viết mã
+
+- `ThemeProvider` sở hữu `themeMode`, khởi tạo `'light'`.
+- `isDark` và `colors` được tính từ `themeMode`, không giữ thêm bản sao state.
+- `toggleTheme` dùng hàm cập nhật nhận chế độ trước đó để chuyển qua lại.
+- Context cung cấp đúng bốn giá trị: `themeMode`, `isDark`, `colors`, `toggleTheme`.
+- Provider nằm trên AppNavigator; navigator, năm màn hình, ScreenContainer và ThemeToggle đọc Context từ bên dưới. Theme không đặt riêng trong Settings vì các thành phần khác cũng cần dùng.
+
+### Nội dung AI tạo đã sử dụng và điều chỉnh
+
+- Tạo `src/context/ThemeContext.jsx` bằng `createContext`, `useState` và `ThemeContext.Provider`. Hai bộ màu có background, surface, text, secondaryText, primary và border.
+- `App.jsx` ngắn gọn, đặt ThemeProvider bao ngoài AppNavigator.
+- Tạo ScreenContainer nhận `children`, chia sẻ `flex: 1`, khoảng cách nội dung và màu nền. Cả năm màn hình sử dụng; bỏ phần bố trí container lặp lại.
+- Tạo ThemeToggle bằng View, Text, Switch và StyleSheet. Switch nhận `value={isDark}` và `onValueChange={toggleTheme}`; Settings chỉ dùng component này.
+- Năm màn hình đọc màu chữ chính/phụ từ Context bằng style động; StyleSheet giữ phần bố trí tĩnh. Các Button điều hướng vẫn là Button cơ bản của React Native.
+- AppNavigator dùng DefaultTheme/DarkTheme làm nền rồi thay các màu từ Context. Giữ các thuộc tính khác của theme thư viện, gồm fonts; đặt màu thanh tiêu đề, chữ/biểu tượng quay lại và nền nội dung phù hợp.
+- Giữ nguyên Home, Profile, EditProfile, Activity, Settings và các lệnh navigate/goBack. Không thêm Tab, Drawer, biểu mẫu hoặc dữ liệu nghiệp vụ.
+- README tiếng Việt cập nhật M2, sở hữu state, luồng đổi màu, cấu trúc, giới hạn bộ nhớ và checklist T01–T12 chưa đánh dấu.
+- Không cài thêm thư viện hoặc sửa package files. Khi bắt đầu M2, repo đã có hai commit cập nhật dependencies `281733e`, `cb6d4b2`; dùng Expo `58.0.6`, React `19.3.0`, React Native `0.88.0-rc.3`. Giữ các cập nhật của người dùng, không quay lại SDK 57.
+
+### Kiểm chứng thực tế do AI thực hiện
+
+| Lệnh hoặc bước kiểm tra | Kết quả |
+| --- | --- |
+| Git trước khi sửa | Nhánh main, working tree sạch; commit mới nhất cb6d4b2, hơn origin/main một commit |
+| Đọc App, navigator, năm màn hình và package.json | M1 vẫn là năm màn hình minh họa; không có chức năng ngoài phạm vi |
+| `npm ls --depth=0` | Mã kết thúc 0; các gói trực tiếp hợp lệ |
+| `npx expo install --check` | Mã kết thúc 0; phiên bản tương thích với Expo đang cài |
+| `npx --yes expo-doctor` | Mã kết thúc 0; 20/20 mục đạt |
+| `npx expo config --type public` | Mã kết thúc 0; SDK 58, cấu hình Android/iOS đọc được |
+| `npm start -- --localhost --port 8084`, CI=1 riêng phiên kiểm tra | Metro khởi động; không lưu thiết lập CI vào dự án |
+| Yêu cầu `/status` | HTTP 200, packager-status:running |
+| Gói Android | HTTP 200; 5.098.389 ký tự; có Context, hai component, navigator, năm màn hình và hai bộ màu |
+| Gói iOS | HTTP 200; 5.096.655 ký tự; có đủ các thành phần và màu như Android |
+| Tập lệnh tạm `mma301-m2-context-check.cjs` ngoài kho code | Mã kết thúc 0; chi tiết và giới hạn bên dưới |
+| Kiểm tra tài liệu UTF-8, khối mã và liên kết nội bộ | Cả README và nhật ký hợp lệ |
+| So sánh nhật ký với bản trước M2 trong Git | Nội dung M0/M1 được giữ nguyên, chỉ thêm mục M2 |
+| Kiểm tra checklist và phạm vi | Đủ 12 mục chưa đánh dấu; useState chỉ trong ThemeProvider; không có API nhập liệu, danh sách, lưu dữ liệu ngoài phạm vi |
+| `git diff --check` | Không có lỗi khoảng trắng |
+| `npm audit --json` | Mã kết thúc 1; còn 22 cảnh báo: 7 trung bình, 15 cao, 0 nghiêm trọng nhất; không khẳng định đã sạch bảo mật |
+
+Tập lệnh tạm dùng Babel có sẵn để đọc mã JSX, mô phỏng `useState`, `useContext`, Provider và thành phần native; dùng StackRouter thật của thư viện đã cài. Không thêm thư viện kiểm thử hoặc đưa tập lệnh vào Git.
+
+Các bước kiểm tra mô phỏng đạt: Provider bao ngoài navigator; cả năm màn hình dùng ScreenContainer; thành phần đọc Context được duyệt bên dưới Provider; giá trị mặc định Light; Switch gọi hàm đổi state; màu Settings và cấu hình điều hướng thay đổi; Dark được giữ qua năm màn hình và quay lại; tắt Switch trở về Light; hai lần cập nhật dựa trên state trước đó trả về chế độ ban đầu; phiên Provider mới trở về Light. Tên route vẫn đúng M1.
+
+Kiểm tra số học độ tương phản của chữ chính/phụ trên background/surface: Light đạt 6,92–17,85; Dark đạt 9,85–17,06. Cả tám cặp đạt mức kiểm tra 4,5. Đây là kiểm tra mã màu, không xác nhận kích thước chữ hoặc giao diện thực tế trên thiết bị.
+
+### Giới hạn và việc người học cần kiểm chứng
+
+- Hooks React và giao diện trong tập lệnh là mô phỏng. Không xác minh bộ lập lịch render thật của React, vòng đời navigation native, việc chạm Switch hoặc màu hiển thị trên điện thoại.
+- Bundle và mô phỏng không thay thế kiểm tra thiết bị. T01–T12 trong README vẫn chưa đánh dấu.
+- Cần tự thử Light/Dark, quay lại/chuyển màn hình, chữ, thanh tiêu đề/biểu tượng quay lại và khởi động lại hoàn toàn.
+- Fast Refresh có thể giữ state; không dùng việc lưu mã nguồn thay cho kiểm tra khởi động lại ở T10.
+- Context chỉ chia sẻ theme. State chỉ phục vụ một component nên giữ trong component đó; không đưa navigation, hồ sơ, dữ liệu hoạt động hoặc biểu mẫu vào ThemeContext.
+
+### Vấn đề thật quan sát được
+
+- Chưa gặp lỗi thực tế của mã nguồn ứng dụng trong các kiểm tra M2 đã chạy; không tạo lỗi giả để ghi nhật ký.
+- Các cảnh báo bảo mật dependencies vẫn còn 22 mục, như kết quả kiểm tra ở đầu M2; không sửa ép phiên bản ngoài phạm vi milestone.
+- Metro có thông báo NO_COLOR bị bỏ qua khi có FORCE_COLOR; Git có thông báo chuẩn hóa LF/CRLF. Đây là thông báo môi trường, không chặn kiểm tra hoặc tạo bundle.
