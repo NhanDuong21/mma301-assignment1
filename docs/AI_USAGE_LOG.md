@@ -150,3 +150,95 @@ Người học hỏi về quy ước `.js` và `.jsx`, đồng thời yêu cầu
 - Nguyên nhân gốc: AI viết biến `$namePlatform` ngay trước dấu `:` trong chuỗi; PowerShell hiểu nhầm đó là cú pháp biến có phạm vi.
 - Cách sửa: dùng `${namePlatform}` để phân định rõ tên biến.
 - Kiểm tra lại: lệnh chạy thành công, nội dung tệp không đổi và cả hai gói Android/iOS đều đạt. Đây là lỗi của lệnh kiểm tra do AI viết, không phải lỗi ứng dụng.
+
+## 07/10/2026 — M1: Khung điều hướng dạng ngăn xếp
+
+### Nhiệm vụ, yêu cầu và tài liệu tham khảo
+
+- Người học yêu cầu triển khai M1 chính thức của MMA301 — Bài tập 1: React Navigation Native Stack với Home, Profile, EditProfile, Activity và Settings; tách phần điều hướng khỏi `App.jsx`, giải thích luồng chạy và kiểm tra trước khi ghi thay đổi vào Git rồi đẩy lên `main`.
+- Chỉ tạo giao diện minh họa. Không làm Context, biểu mẫu, trạng thái hồ sơ/hoạt động, danh sách, lưu dữ liệu, đổi giao diện sáng/tối hoặc các chức năng M2–M5.
+- Tài liệu tham khảo: [Cài đặt với Expo](https://reactnavigation.org/docs/getting-started/), [Native Stack](https://reactnavigation.org/docs/native-stack-navigator/), [Chuyển màn hình](https://reactnavigation.org/docs/navigating/) và [NavigationContainer](https://reactnavigation.org/docs/navigation-container/).
+- Trong yêu cầu M1, người học xác nhận đã mở ứng dụng M0 trên thiết bị thật và thử việc tự cập nhật giao diện sau khi lưu mã nguồn. Đây là thông tin do người học cung cấp ngày 07/10/2026, không phải thao tác trên thiết bị của AI và không xác nhận M1 đã chạy trên thiết bị.
+
+### Mục đích
+
+Tạo một khung điều hướng dễ đọc để người học hiểu route, màn hình, ngăn xếp, nút mở màn hình và nút quay lại. Giữ nội dung các chức năng ở mức minh họa để không làm trước giai đoạn tiếp theo.
+
+### Nội dung AI tạo đã sử dụng và những điều chỉnh
+
+- Cài `@react-navigation/native` và `@react-navigation/native-stack` bằng npm; cài `react-native-screens` và `react-native-safe-area-context` bằng `expo install` để khớp SDK 57.
+- `App.jsx` chỉ render `AppNavigator`; giữ nguyên entry point `index.js`.
+- Tạo `src/navigation/AppNavigator.jsx`, có một `NavigationContainer`, một Native Stack và năm `Stack.Screen`. `initialRouteName` là `Home`.
+- Tạo năm function component trong `src/screens/`, dùng các thành phần cơ bản của React Native, giữ quy ước `PascalCase.jsx`.
+- Home có ba nút mở Profile, Activity và Settings. Profile mở EditProfile. EditProfile có nút gọi `navigation.goBack()`; các màn hình con dùng thêm nút quay lại mặc định trên thanh tiêu đề.
+- Route dùng tên ngắn, nhất quán: `Home`, `Profile`, `EditProfile`, `Activity`, `Settings`. Tiêu đề EditProfile được hiển thị là `Edit Profile`, độc lập với tên route.
+- Tắt hiệu ứng chuyển màn hình bằng `animation: 'none'`. Không thêm bộ biểu tượng, thư viện giao diện, thư mục dịch vụ, hook hoặc Context.
+- Cập nhật README tiếng Việt ngắn gọn: M1, cấu trúc, luồng điều hướng, lệnh chạy, checklist T01–T10 chưa đánh dấu và những chức năng chưa triển khai.
+- Cập nhật Expo từ `57.0.26` lên bản vá `57.0.27` do công cụ kiểm tra yêu cầu; vẫn ở SDK 57, giữ phiên bản React và React Native.
+
+### Kiểm chứng do AI thực hiện
+
+| Lệnh hoặc bước kiểm tra | Kết quả thực tế |
+| --- | --- |
+| Kiểm tra Git trước khi sửa | `main`, đồng bộ `origin/main`, sạch; commit mới nhất `69ef50d`, lịch sử M0 được giữ nguyên |
+| Đọc `package.json`, `App.jsx`, `index.js` và danh sách tệp | Đúng nền JavaScript/Expo và entry point hiện có |
+| `npm install @react-navigation/native @react-navigation/native-stack` | Thành công; thêm 19 gói, kiểm tra bảo mật 483 gói; lúc này còn 23 cảnh báo |
+| `npx expo install react-native-screens react-native-safe-area-context` | Thành công; chọn hai thư viện native tương thích SDK 57 |
+| `npx expo install expo@~57.0.27` | Thành công; cập nhật bản vá Expo và 20 gói trong cây thư viện; kiểm tra bảo mật báo 22 cảnh báo |
+| `npm ls --depth=0` sau sửa | Mã kết thúc 0; native `7.5.0`, native-stack `7.20.0`, screens `4.26.2`, safe-area-context `5.7.0`, Expo `57.0.27`, React `19.2.3`, React Native `0.86.3` |
+| `npx expo install --check` sau sửa | Mã kết thúc 0; các thư viện đúng phiên bản yêu cầu |
+| `npx expo config --type public` | Mã kết thúc 0; đúng tên, mã định danh, SDK 57, cấu hình Android/iOS và đường dẫn ảnh |
+| `npx --yes expo-doctor` sau sửa và thử lại | Mã kết thúc 0; cả 21/21 mục đạt |
+| `npm start -- --localhost --port 8083`, đặt `CI=1` riêng trong phiên kiểm tra | Expo/Metro khởi động thành công; chế độ này tắt tự động tải lại trong phiên kiểm tra |
+| Yêu cầu trạng thái Metro tại `/status` | HTTP 200; `packager-status:running` |
+| Gói Android tại `/index.bundle?platform=android&dev=true&minify=false` | HTTP 200; 4.971.405 ký tự; có AppNavigator, năm màn hình và nội dung tiếng Việt sau giải mã ký tự |
+| Gói iOS tại `/index.bundle?platform=ios&dev=true&minify=false` | HTTP 200; 4.969.131 ký tự; có AppNavigator, năm màn hình và nội dung tiếng Việt sau giải mã ký tự |
+| Kiểm tra JavaScript bằng tập lệnh tạm ngoài kho code | Thành công; chi tiết bên dưới |
+| Rà soát phạm vi mã nguồn | Không thêm các API Context, trạng thái ứng dụng, nhập liệu, danh sách hay lưu dữ liệu bị loại khỏi M1 |
+| Kiểm tra tài liệu UTF-8, khối mã và liên kết nội bộ | Cả README và nhật ký đều hợp lệ |
+| Đối chiếu nhật ký với bản trước M1 trong Git | Nội dung lịch sử được giữ nguyên; chỉ thêm mục M1 |
+| Kiểm tra checklist README | Đủ T01–T10, cả 10 mục chưa đánh dấu |
+| `git diff --check` | Không có lỗi khoảng trắng |
+| `npm audit --json` cuối M1 | Mã kết thúc 1; còn 22 mục cảnh báo: 7 mức trung bình, 15 mức cao, 0 mức nghiêm trọng nhất |
+
+Tập lệnh kiểm tra logic nằm ngoài kho code, tại thư mục tạm của Windows, tên `mma301-m1-navigation-check.cjs`; chạy bằng Node với đường dẫn kho code làm tham số. Tập lệnh dùng Babel đã có trong cây thư viện để đọc JSX; thay thành phần giao diện bằng phần tử giả lập và dùng `StackRouter` thật của thư viện đã cài để xử lý các hành động. Không cài thêm thư viện kiểm thử.
+
+Các kiểm tra logic L01–L10 đều đạt: Home khởi đầu; các nút thật trong mã nguồn gọi đúng Profile, EditProfile, Activity, Settings và `goBack()`; các trạng thái ngăn xếp đúng; năm vòng điều hướng liên tiếp đều trở lại Home. Cũng xác nhận đủ năm route, liên kết đúng component, không có route trùng, chỉ một container và hiệu ứng chuyển màn hình đã tắt. Hành động tới route không tồn tại và quay lại khi chỉ còn Home được router từ chối như dự kiến.
+
+### Giới hạn kiểm chứng và phần người học cần tự kiểm tra
+
+- AI không chạm nút trên điện thoại, không gắn giao diện native trong môi trường kiểm tra logic và không thử nút quay lại trên thanh tiêu đề hoặc hành động quay lại của hệ thống.
+- Kiểm tra gói JavaScript chứng minh các import được xử lý; kiểm tra logic chứng minh mã xử lý nút và router JavaScript hoạt động trong môi trường kiểm tra. Hai việc này chưa chứng minh toàn bộ vòng đời navigator hoặc giao diện native trên thiết bị hoạt động.
+- Checklist T01–T10 trong README vẫn chưa đánh dấu. Chỉ xác nhận sau khi người học tự mở M1 và thử từng bước trên thiết bị.
+- Các cảnh báo bảo mật vẫn còn; không ép thay phiên bản thư viện hoặc khẳng định đã hết vấn đề bảo mật.
+
+### Vấn đề thật đã gặp
+
+#### Phiên bản vá Expo không còn khớp yêu cầu: đã xử lý
+
+- Biểu hiện → `expo install --check` báo thư viện cũ; `expo-doctor` không đạt mục kiểm tra phiên bản.
+- Giả thuyết → đã có bản vá mới trong SDK 57 sau M0.
+- Kiểm tra → công cụ báo yêu cầu `~57.0.27`, trong khi đang cài `57.0.26`.
+- Nguyên nhân gốc → bản vá Expo hiện có thấp hơn phiên bản được khuyến nghị tại thời điểm M1.
+- Cách sửa → chạy `npx expo install expo@~57.0.27`.
+- Kiểm tra lại → thư viện đúng phiên bản; `expo-doctor` đạt 21/21; kiểm tra logic và tạo gói Android/iOS thành công.
+
+#### Máy chủ Expo bị hết thời gian kết nối: thử lại thành công
+
+- Biểu hiện → lần đầu `expo-doctor` báo `fetch failed` và `ConnectTimeoutError` tới `exp.host:443`; không kiểm tra được cấu trúc cấu hình trực tuyến. Tổng lần đầu là 19/21 mục đạt, gồm lỗi mạng và sai bản vá.
+- Giả thuyết → kết nối tới dịch vụ Expo bị gián đoạn trong lần kiểm tra đó.
+- Kiểm tra → thông báo chỉ ra kết nối vượt 10 giây; cấu hình vẫn đọc được bằng `expo config`.
+- Nguyên nhân xác định được → yêu cầu mạng tới máy chủ Expo bị hết thời gian; chưa có bằng chứng để xác định nguyên nhân sâu hơn ở mạng.
+- Cách xử lý → chạy lại `expo-doctor` sau khi cài bản vá, không bỏ qua hoặc tắt mục kiểm tra.
+- Kiểm tra lại → mã kết thúc 0, cả 21/21 mục đạt.
+
+#### Lệnh kiểm tra không tìm thấy chữ tiếng Việt trong gói: đã sửa cách kiểm tra
+
+- Biểu hiện → gói Android trả HTTP 200 nhưng kiểm tra báo thiếu cụm chữ từ Home.
+- Giả thuyết → ký tự trong mã JavaScript tạo ra đã được biểu diễn theo cách khác.
+- Kiểm tra → đọc đoạn mã gần tiêu đề Home, thấy chuỗi tiếng Việt chứa các dạng `\u1ECD`, `\xE0` thay cho chữ có dấu.
+- Nguyên nhân gốc → công cụ chuyển mã biểu diễn chữ bằng mã ký tự; tìm chuỗi tiếng Việt nguyên văn trong văn bản gói cho kết quả sai.
+- Cách sửa → giải mã các dạng `\uXXXX` và `\xXX` trước khi đối chiếu chữ; không sửa giao diện ứng dụng.
+- Kiểm tra lại → cả gói Android/iOS đều có đủ màn hình và chữ yêu cầu. Đây là lỗi trong cách kiểm tra do AI viết, không phải lỗi ứng dụng.
+
+Chưa quan sát thấy lỗi thật của mã nguồn ứng dụng trong phạm vi kiểm tra M1. Các giới hạn trên thiết bị và cảnh báo thư viện được giữ lại rõ ràng.
