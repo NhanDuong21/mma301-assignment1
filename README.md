@@ -1,6 +1,6 @@
 # MMA301 — Bài tập 1: Ứng dụng hồ sơ và hoạt động
 
-Giai đoạn hiện tại: **M5 — Lưu và khôi phục hồ sơ, giao diện**.
+Giai đoạn hiện tại: **M6 — Tích hợp và đối chiếu yêu cầu**.
 
 ## Cài đặt và chạy
 
@@ -67,3 +67,7 @@ Khóa không tồn tại là lần chạy đầu bình thường. JSON hỏng, t
 Chọn hoạt động vẫn chỉ thuộc ActivityScreen và không được lưu. Đóng app ngay khi vừa sửa có thể ngắt lần ghi đang chạy; khi thử khôi phục hãy chờ thao tác lưu hoàn tất, không dùng Fast Refresh thay cho khởi động lại.
 
 M5: 21 nhóm logic/fault injection đạt; Android/iOS bundle HTTP 200; doctor 21/21; dependency phù hợp. Lưu trữ native và mở lại app thật vẫn cần người học kiểm chứng.
+
+## Tích hợp và bằng chứng (M6)
+
+Luồng tích hợp qua đủ 5 route đã chạy đạt trong mô phỏng: 22 nhóm kiểm tra, dùng StackRouter thật và mock UI/hooks/storage. Xem [bảng đối chiếu R01–R10](docs/REQUIREMENT_TRACEABILITY_MATRIX.md) và [các quyết định thiết kế](docs/DESIGN_DECISIONS.md). Bố trí trên điện thoại vẫn là phần chờ xác nhận; M6 không thêm chức năng hoặc dependency.

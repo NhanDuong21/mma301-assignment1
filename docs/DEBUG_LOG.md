@@ -12,3 +12,13 @@
 - Kiểm tra lại: chạy lại đạt cả 6 nhóm kiểm tra M3; Android/iOS bundle HTTP 200.
 - Phòng hồi quy: kiểm tra cả hai ô ở chế độ tối; bundle Android/iOS riêng để kiểm tra khả năng biên dịch.
 
+
+## D02 — Dòng trống dư cuối README (M6, 07/10/2026)
+
+- Phân loại: tooling/tài liệu.
+- Triệu chứng: git diff --check trả mã 1, README.md:74: new blank line at EOF.
+- Bối cảnh: script PowerShell thay nhãn milestone sau khi đã nối thêm nội dung README.
+- Giả thuyết và kiểm tra: Get-Content -Raw đã có newline cuối, Set-Content lại bổ sung newline; diff xác nhận lỗi chỉ ở cuối tệp.
+- Nguyên nhân gốc: ghi lại chuỗi đã có newline bằng thao tác tự thêm newline.
+- Cách sửa: TrimEnd rồi thêm đúng một newline, ghi với -NoNewline.
+- Kiểm tra lại/phòng hồi quy: chạy git diff --check sau sửa và trước mọi commit; không liên quan logic ứng dụng.

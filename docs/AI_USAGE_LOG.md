@@ -350,3 +350,16 @@ Kiểm tra số học độ tương phản của chữ chính/phụ trên backgr
 - Lỗi thật: chưa phát hiện lỗi mới qua những kiểm tra này. npm install báo 22 cảnh báo bảo mật (7 vừa, 15 cao); sẽ phân tích trong M7, không chạy audit fix --force.
 - Giới hạn: bài thử dùng mock AsyncStorage và mô phỏng remount, không chứng minh dữ liệu native còn sau khi hệ điều hành tắt app. Không lưu lựa chọn hoạt động, không mã hóa, không có nút thử lại riêng.
 - Người học còn phải: kiểm tra Save/theme → đóng/mở app trên điện thoại, đọc hiểu useEffect/useRef/hydrated và đường lỗi trong checklist cuối. Nhật ký M2 giữ nguyên vì hành vi khi đó chỉ nằm trong bộ nhớ.
+
+## M6 — Tích hợp và đối chiếu yêu cầu (07/10/2026)
+
+- Yêu cầu/tham chiếu: sprint M3→M7, phần M6; M5 đã commit/push và chạy đạt.
+- Mục đích: nối các luồng thành một ứng dụng, xác định chủ sở hữu state và bằng chứng cho R01–R10.
+- Đầu ra AI sử dụng: REQUIREMENT_TRACEABILITY_MATRIX.md và DESIGN_DECISIONS.md; ghi rõ 7 quyết định và đánh đổi, trạng thái kiểm chứng theo từng mức.
+- Điều chỉnh: không refactor source vì rà soát không tìm thấy nhu cầu đủ rõ. Giữ hai Context riêng, form/list cục bộ; không thêm abstraction hay dependency.
+- Kiểm chứng: chạy lại script ngoài repo đạt 22 nhóm. Nhóm mới đi startup → Profile → Edit invalid/valid/cancel → Home nhận dữ liệu → Activity chọn → Settings đổi theme → quay lại → remount restore; gọi handler source thật và StackRouter thật, hooks/UI/storage vẫn mock. Mở Activity mới xóa lựa chọn đúng chủ sở hữu state.
+- Source audit: một NavigationContainer, năm route đúng; storage chỉ ở helper; inputs controlled; keys ổn định; data/extraData/empty đầy đủ; không push/splice state; mỗi consumer nằm dưới Provider.
+- Source/dependency không đổi so với hai bundle và doctor đã đạt ở M5. Kiểm tra diff và liên kết tài liệu trước commit.
+- Lỗi thật: chưa phát hiện lỗi mới. R09 ghi PARTIAL vì chưa xác minh bố trí native/keyboard/cỡ chữ trên điện thoại; không ghi PASS thay cho thiếu bằng chứng.
+- Giới hạn/người học còn phải: thao tác native, vòng đời thật và lưu đĩa thật vẫn chờ checklist cuối; cần học các đánh đổi trong DESIGN_DECISIONS.
+- Cập nhật kiểm tra trước commit M6: git diff --check phát hiện dòng trống dư cuối README; đã sửa và chạy lại đạt. Xem D02; đây là lỗi tài liệu, không phải ứng dụng. UTF-8, code fence, liên kết nội bộ và phần lịch sử AI M0–M2 đều đã kiểm tra đạt.
