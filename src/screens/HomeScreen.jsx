@@ -3,13 +3,16 @@ import { Button, StyleSheet, Text, View } from 'react-native';
 
 import ScreenContainer from '../components/ScreenContainer';
 import { ThemeContext } from '../context/ThemeContext';
+import { ProfileContext } from '../context/ProfileContext';
 
 export default function HomeScreen({ navigation }) {
   const { colors } = useContext(ThemeContext);
+  const { profile } = useContext(ProfileContext);
 
   return (
     <ScreenContainer>
       <Text style={[styles.title, { color: colors.text }]}>MMA301 Assignment 1</Text>
+      <Text style={{ color: colors.text }}>Xin chào, {profile.name}!</Text>
       <Text style={{ color: colors.secondaryText }}>Chọn một màn hình để khám phá ứng dụng.</Text>
 
       <View style={styles.button}>

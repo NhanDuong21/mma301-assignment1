@@ -312,3 +312,16 @@ Kiểm tra số học độ tương phản của chữ chính/phụ trên backgr
 - Chưa gặp lỗi thực tế của mã nguồn ứng dụng trong các kiểm tra M2 đã chạy; không tạo lỗi giả để ghi nhật ký.
 - Các cảnh báo bảo mật dependencies vẫn còn 22 mục, như kết quả kiểm tra ở đầu M2; không sửa ép phiên bản ngoài phạm vi milestone.
 - Metro có thông báo NO_COLOR bị bỏ qua khi có FORCE_COLOR; Git có thông báo chuẩn hóa LF/CRLF. Đây là thông báo môi trường, không chặn kiểm tra hoặc tạo bundle.
+
+## M3 — Hồ sơ dùng chung và biểu mẫu (07/10/2026)
+
+- Yêu cầu/tham chiếu: sprint M3→M7 của người học; chỉ M3 trong commit này.
+- Mục đích: hiểu bản nháp cục bộ, Context dùng chung, cập nhật bất biến và kiểm tra dữ liệu trước khi lưu.
+- Đầu ra AI sử dụng: ProfileContext, quy tắc validateProfile, Profile/EditProfile, lời chào Home, provider tree và màu lỗi. Tài liệu tiếng Việt cập nhật baseline SDK 57.
+- Điều chỉnh: giữ avatar chữ cái không cần mạng; không thêm thư viện form; bản nháp khởi tạo lúc màn hình được mở; lỗi giữ đến lần Lưu kế tiếp.
+- Luồng: TextInput → state cục bộ → validateProfile → updateProfile tạo object mới → Context → Home/Profile; Hủy chỉ goBack.
+- Kiểm chứng: script ngoài repo `node "$env:TEMP\mma301-sprint-check.cjs" "$PWD"` đạt 6 nhóm: validation biên, provider tree, invalid/valid save, cancel/mở lại, Context, theme và route handlers. Mock React hooks/native component; không phải chạy UI native.
+- Android bundle HTTP 200 (4.990.031 byte); iOS HTTP 200 (4.987.769 byte), Metro cổng 8085. `npx expo install --check` đạt; `npx expo-doctor` 21/21; `git diff --check` đạt.
+- Lỗi thật: D01 trong DEBUG_LOG — script đọc sai vị trí màu trong mảng style; sửa cách kết hợp style, chạy lại cả 6 nhóm đạt. Metro có cảnh báo biến môi trường NO_COLOR/FORCE_COLOR, không ảnh hưởng bundle; không phải lỗi ứng dụng.
+- Giới hạn: chưa persistence; kiểm tra ký tự theo UTF-16; chưa xác minh bàn phím/gesture/hiển thị native.
+- Người học còn phải: tự test toàn ứng dụng trên điện thoại cuối sprint, giải thích controlled input và vì sao Cancel không thay đổi Context. AI chưa có bằng chứng kiểm tra điện thoại.

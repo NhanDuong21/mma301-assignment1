@@ -9,6 +9,7 @@ const lightColors = {
   secondaryText: '#475569',
   primary: '#1d4ed8',
   border: '#cbd5e1',
+  error: '#b91c1c',
 };
 
 const darkColors = {
@@ -18,6 +19,7 @@ const darkColors = {
   secondaryText: '#cbd5e1',
   primary: '#93c5fd',
   border: '#64748b',
+  error: '#fca5a5',
 };
 
 export function ThemeProvider({ children }) {
