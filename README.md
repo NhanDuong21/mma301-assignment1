@@ -1,73 +1,105 @@
 # MMA301 — Bài tập 1: Ứng dụng hồ sơ và hoạt động
 
-Giai đoạn hiện tại: **M6 — Tích hợp và đối chiếu yêu cầu**.
+**M3–M7 đã hoàn tất phần triển khai và kiểm chứng tự động.** Bản sẵn sàng để người học kiểm tra trên điện thoại và luyện phỏng vấn. Chưa có xác nhận UI native cuối sprint.
 
-## Cài đặt và chạy
+Ứng dụng có 5 màn hình: xem/sửa hồ sơ, kiểm tra dữ liệu nhập, chọn/lọc hoạt động và đổi giao diện sáng/tối. Hồ sơ và theme lưu trên máy. Không có máy chủ, đăng nhập, Firebase hoặc tính năng Assignment 2.
 
-JavaScript, Expo `~57.0.27`, React `19.2.3`, React Native `0.86.3`, React Navigation Native Stack. Giữ phiên bản trong `package-lock.json`.
+## Công nghệ và cài đặt
 
-Cần Node.js LTS, npm, Git và Expo Go tương thích SDK 57. Máy kiểm tra dùng Node 24.15.0, npm 11.12.1. Điện thoại và máy tính cùng mạng khi dùng mạng nội bộ.
+JavaScript + React Native + Expo + React Navigation Native Stack + Context + AsyncStorage. Baseline: Expo `~57.0.27`, React `19.2.3`, RN `0.86.3`, AsyncStorage `2.2.0`. Giữ `package-lock.json`; không tự nâng SDK.
+
+Cần Node.js LTS, npm, Git và Expo Go tương thích SDK 57. Máy kiểm tra dùng Windows, Node `24.15.0`, npm `11.12.1`.
 
 ```sh
+git clone https://github.com/NhanDuong21/mma301-assignment1.git
+cd mma301-assignment1
 npm ci
 npm start
 ```
 
-Quét QR trong Expo Go. `npm run android` cần thiết bị/máy ảo Android; `npm run ios` cần macOS và máy ảo iOS. Windows có thể dùng iPhone thật qua Expo Go. Giữ terminal mở; Ctrl+C để dừng.
+Quét QR bằng Expo Go trên Android hoặc Camera trên iPhone. Khi dùng mạng nội bộ, điện thoại và máy tính cùng mạng. Giữ terminal mở; Ctrl+C để dừng. Nếu kết nối lỗi, kiểm tra mạng/tường lửa và [phiên bản Expo Go](https://expo.dev/go).
 
-## Cấu trúc và cách đặt tên
+`npm run android` cần thiết bị/máy ảo Android đã cấu hình. `npm run ios` cần macOS và máy ảo iOS; trên Windows có thể dùng iPhone thật qua Expo Go. Không cần file secret hoặc cấu hình backend.
 
-- `App.jsx`: ThemeProvider → ProfileProvider → AppNavigator.
-- `src/navigation/AppNavigator.jsx`: Home → Profile → EditProfile; Home → Activity hoặc Settings.
-- `src/context/`: hồ sơ và theme dùng chung.
-- `src/components/`: ScreenContainer và ThemeToggle dùng lại.
-- `src/screens/`: năm màn hình.
-- `src/utils/profileValidation.js`: quy tắc kiểm tra hồ sơ.
-- `docs/AI_USAGE_LOG.md`: lịch sử hỗ trợ AI; `docs/DEBUG_LOG.md`: lỗi thật và cách sửa.
+## Cấu trúc mã nguồn
 
-Component có JSX dùng `PascalCase.jsx`; JavaScript thuần dùng `camelCase.js`. Tệp khởi đầu/cấu hình giữ tên theo công cụ, ví dụ `index.js`.
+```text
+index.js                      Đăng ký App với Expo
+App.jsx                       ThemeProvider → ProfileProvider → AppNavigator
+src/
+├── navigation/               Năm route và theme của thanh tiêu đề
+├── context/                  ThemeContext, ProfileContext
+├── screens/                  Home, Profile, EditProfile, Activity, Settings
+├── components/               Khung màn hình, công tắc, item, loading, cảnh báo
+├── data/activities.js        Sáu hoạt động với ID cố định
+├── utils/profileValidation.js  Kiểm tra tên/giới thiệu và shape của hồ sơ
+└── storage/appStorage.js     Hai khóa, JSON, xử lý lỗi, thứ tự ghi
+docs/                         Yêu cầu, quyết định thiết kế, test, debug, học và AI
+```
 
-## Hồ sơ và biểu mẫu
+Component chứa JSX dùng `PascalCase.jsx`; JavaScript thuần tự đặt dùng `camelCase.js`. Tệp khởi đầu/cấu hình giữ tên công cụ quy định như `index.js`. Không commit node_modules, .expo hoặc secret.
 
-ProfileContext giữ `{ name, bio }`, mặc định Student / MMA301 learner. Profile hiển thị tên, giới thiệu và chữ cái đại diện. Home đọc cùng hồ sơ để chào người dùng.
+## Màn hình và luồng chạy
 
-EditProfile tạo bản nháp khi mở. Mỗi TextInput có `value` và `onChangeText`. Lưu → kiểm tra → sai thì hiện lỗi và ở lại; đúng thì tạo hồ sơ mới rồi quay lại. Hủy/quay lại bỏ bản nháp. Tên sau trim dài 2–50 ký tự; giới thiệu tối đa 160; khi lưu bỏ khoảng trắng hai đầu. Độ dài dùng JavaScript `length` (đơn vị UTF-16).
+```text
+Khởi động → đọc theme → đọc hồ sơ → Home
+Home ──→ Profile ──→ EditProfile ──→ Lưu hợp lệ/Hủy ──→ Profile
+     ├─→ Activity
+     └─→ Settings
+```
 
-ThemeContext chia sẻ chế độ sáng/tối và màu cho màn hình, ô nhập, lỗi và thanh điều hướng. Từ M5, khởi động lại khôi phục hồ sơ và theme đã lưu. Nếu chưa có dữ liệu, dùng hồ sơ mặc định và Light. Danh sách hoạt động đã triển khai ở M4.
+Các màn hình con có nút quay lại trên header. Native Stack giữ màn hình trước ở dưới; pop EditProfile bỏ bản nháp, pop Activity bỏ lựa chọn cục bộ. Provider ngoài stack nên hồ sơ/theme vẫn còn khi chuyển màn hình.
 
-## Kiểm tra
+## State và Context
+
+| Dữ liệu | Nơi sở hữu | Lưu qua lần mở app? |
+|---|---|---|
+| Hồ sơ chính name/bio | ProfileProvider; Home/Profile/Edit đọc chung | Có |
+| themeMode | ThemeProvider; UI và navigator đọc chung | Có |
+| Bản nháp name/bio và errors | EditProfileScreen | Không |
+| selectedIds và showSelectedOnly | ActivityScreen | Không |
+
+Context chia sẻ dữ liệu; useState giữ dữ liệu trong phiên hiện tại; AsyncStorage giữ bản sao để khôi phục phiên sau. Không cần Redux cho hai nhóm dữ liệu nhỏ này.
+
+## Sửa hồ sơ và danh sách hoạt động
+
+Profile mặc định là `Student` / `MMA301 learner`, avatar dùng chữ cái từ tên, không cần ảnh mạng. Form có TextInput controlled: `value` lấy từ state nháp, `onChangeText` cập nhật nháp.
+
+Lưu → kiểm tra → sai thì hiện lỗi và ở lại; đúng thì tạo object hồ sơ mới, trim hai đầu rồi quay lại. Tên sau trim phải dài 2–50; giới thiệu tối đa 160 ký tự. Quy tắc độ dài dùng JavaScript `length` (UTF-16). Hủy/back không cập nhật Context.
+
+Activity dùng FlatList với data, renderItem, keyExtractor lấy ID, extraData theo mảng lựa chọn và ListEmptyComponent. Chọn dùng spread, bỏ chọn dùng filter; không mutate mảng. Bật “Chỉ hiển thị đã chọn” khi chưa chọn gì sẽ hiện thông báo rỗng. Mở Activity mới khởi tạo lại lựa chọn và bộ lọc.
+
+## Lưu trữ và xử lý lỗi
+
+Chỉ `appStorage.js` gọi AsyncStorage, dùng `mma301.profile` và `mma301.theme`. Lúc đầu mỗi Provider đọc, parse JSON, kiểm tra dữ liệu rồi đánh dấu `hydrated`. Trong lúc chờ chỉ hiện loading; Home chỉ xuất hiện khi cả hai đọc xong.
+
+Effect lưu chạy sau hydration và sau khi state đổi. Ref ghi nhớ giá trị vừa đọc/đã yêu cầu ghi, tránh ghi đè mặc định hoặc ghi lại lúc startup. Những lần ghi cùng key chạy tuần tự để dữ liệu mới nhất thắng.
+
+Thiếu key là lần đầu bình thường. JSON hỏng, sai kiểu hoặc lỗi đọc → mặc định và cảnh báo, không tự ghi đè dữ liệu cũ. Lỗi ghi → UI vẫn cập nhật nhưng báo chưa lưu; lần thay đổi tiếp theo thử lại và xóa cảnh báo nếu thành công. Từ M5, mở lại app khôi phục theme đã lưu; hành vi Light sau restart trong nhật ký M2 là lịch sử lúc chưa có storage.
+
+## Kiểm tra và bằng chứng
 
 ```sh
 npx expo install --check
 npx expo-doctor
+npx expo config --type public
+npm audit
 ```
 
-M3: sáu nhóm kiểm tra logic bằng mock chạy đạt; Android/iOS bundle HTTP 200; doctor 21/21; kiểm tra dependency đạt. Xem chi tiết và giới hạn trong [nhật ký AI](docs/AI_USAGE_LOG.md), [nhật ký lỗi](docs/DEBUG_LOG.md).
+Bản clone sạch đã chạy `npm ci`, check/doctor 21/21, config, Metro, bundle Android/iOS HTTP 200 và 22 nhóm kiểm tra logic/tích hợp. Script dùng mock hooks/UI/storage và StackRouter thật; không chứng minh thao tác native hoặc lưu đĩa thật.
 
-Kiểm tra điện thoại đang chờ người học: năm màn hình, nhập sai/đúng, Hủy, quay lại hệ thống, cuộn khi mở bàn phím và màu sáng/tối. Kết quả script không chứng minh UI native đã chạy trên thiết bị.
+- [Ma trận kiểm thử và một checklist cuối trên điện thoại](docs/TEST_MATRIX.md)
+- [Bảng đối chiếu R01–R10](docs/REQUIREMENT_TRACEABILITY_MATRIX.md)
+- [Quyết định thiết kế và đánh đổi](docs/DESIGN_DECISIONS.md)
+- [Nhật ký lỗi thật và cách sửa](docs/DEBUG_LOG.md)
+- [Bản đồ học theo luồng, câu hỏi và sáu bài đổi yêu cầu](docs/LEARNING_MAP.md)
+- [Nhật ký sử dụng AI, giữ nguyên lịch sử M0–M2](docs/AI_USAGE_LOG.md)
 
+## Giới hạn đã biết
 
-## Danh sách hoạt động (M4)
+- Chưa xác minh native UI, bàn phím, gesture/back, bố trí màn hình nhỏ/cỡ chữ lớn và đóng/mở app thật; R09 còn PARTIAL ở mức bằng chứng. Người học cần hoàn thành checklist trước demo.
+- AsyncStorage không mã hóa; không dùng để lưu bí mật. Đóng app ngay khi vừa sửa có thể ngắt lần ghi đang chạy; không có nút thử lại riêng hoặc đồng bộ máy chủ.
+- `npm audit` còn 22 mục (7 vừa, 15 cao, 0 nghiêm trọng nhất) trong cây dependency; chưa sửa. Không chạy `npm audit fix --force` hoặc đổi Expo/RN để ép hết cảnh báo. Chi tiết phạm vi ở ma trận kiểm thử.
+- Chưa tạo APK; bài kiểm tra bundle không thay thế kiểm thử bản native. Chỉ triển khai Assignment 1.
 
-Sáu mục trong `src/data/activities.js` có ID duy nhất, không đổi theo vị trí. `ActivityScreen` giữ `selectedIds` và bộ lọc trong state cục bộ. `FlatList` nhận `data` sau lọc, `renderItem` tạo ActivityItem, `keyExtractor` lấy ID và `extraData` báo thay đổi lựa chọn. Chọn dùng mảng mới với `...`; bỏ chọn dùng `filter`. Không sửa trực tiếp mảng cũ.
-
-Bật “Chỉ hiển thị đã chọn” lúc chưa chọn gì sẽ đưa `data` về rỗng, hiển thị `ListEmptyComponent`. Số đã chọn tính từ toàn bộ lựa chọn. Quay lại Home làm Activity bị gỡ khỏi stack; mở Activity lại sẽ khởi tạo lựa chọn/bộ lọc mới. M4 không lưu lựa chọn.
-
-M4: 9 nhóm logic đạt (gồm hồi quy M3), doctor 21/21, dependency phù hợp và hai bundle đạt. Thao tác danh sách/khả năng cuộn trên điện thoại vẫn chờ người học xác nhận.
-
-
-## Lưu trữ và khởi động (M5)
-
-`src/storage/appStorage.js` là nơi duy nhất gọi AsyncStorage 2.2.0, dùng hai khóa `mma301.profile` và `mma301.theme`. ThemeProvider đọc trước, sau đó ProfileProvider đọc hồ sơ; trong lúc chờ chỉ hiện màn hình tải. Chỉ sau khi cả hai hoàn tất mới mở Home.
-
-Mỗi Provider có cờ `hydrated` và một ref nhớ giá trị đã yêu cầu ghi. Không ghi mặc định trước khi đọc, cũng không tự ghi lại giá trị vừa khôi phục. Khi người dùng thay đổi state, effect mới lưu JSON. Các lần ghi cùng khóa chạy tuần tự. Hai Context vẫn chia sẻ state trong bộ nhớ; AsyncStorage giữ bản sao qua lần mở app sau.
-
-Khóa không tồn tại là lần chạy đầu bình thường. JSON hỏng, theme ngoài light/dark, hồ sơ sai kiểu hoặc lỗi đọc sẽ dùng mặc định và hiện cảnh báo. Lỗi ghi không chặn thao tác: state mới vẫn hiện, nhưng cảnh báo cho biết chưa lưu trên máy. Lần thay đổi tiếp theo thử ghi lại; thành công thì xóa cảnh báo. AsyncStorage không mã hóa, không dùng lưu bí mật.
-
-Chọn hoạt động vẫn chỉ thuộc ActivityScreen và không được lưu. Đóng app ngay khi vừa sửa có thể ngắt lần ghi đang chạy; khi thử khôi phục hãy chờ thao tác lưu hoàn tất, không dùng Fast Refresh thay cho khởi động lại.
-
-M5: 21 nhóm logic/fault injection đạt; Android/iOS bundle HTTP 200; doctor 21/21; dependency phù hợp. Lưu trữ native và mở lại app thật vẫn cần người học kiểm chứng.
-
-## Tích hợp và bằng chứng (M6)
-
-Luồng tích hợp qua đủ 5 route đã chạy đạt trong mô phỏng: 22 nhóm kiểm tra, dùng StackRouter thật và mock UI/hooks/storage. Xem [bảng đối chiếu R01–R10](docs/REQUIREMENT_TRACEABILITY_MATRIX.md) và [các quyết định thiết kế](docs/DESIGN_DECISIONS.md). Bố trí trên điện thoại vẫn là phần chờ xác nhận; M6 không thêm chức năng hoặc dependency.
+AI đã hỗ trợ phần lớn mã và tài liệu trong sprint. Người học cần tự chạy, đọc luồng và giải thích/debug/sửa source; không dùng kết quả AI như bằng chứng đã tự kiểm tra điện thoại.

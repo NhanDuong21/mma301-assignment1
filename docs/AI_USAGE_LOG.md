@@ -363,3 +363,18 @@ Kiểm tra số học độ tương phản của chữ chính/phụ trên backgr
 - Lỗi thật: chưa phát hiện lỗi mới. R09 ghi PARTIAL vì chưa xác minh bố trí native/keyboard/cỡ chữ trên điện thoại; không ghi PASS thay cho thiếu bằng chứng.
 - Giới hạn/người học còn phải: thao tác native, vòng đời thật và lưu đĩa thật vẫn chờ checklist cuối; cần học các đánh đổi trong DESIGN_DECISIONS.
 - Cập nhật kiểm tra trước commit M6: git diff --check phát hiện dòng trống dư cuối README; đã sửa và chạy lại đạt. Xem D02; đây là lỗi tài liệu, không phải ứng dụng. UTF-8, code fence, liên kết nội bộ và phần lịch sử AI M0–M2 đều đã kiểm tra đạt.
+
+## M7 — Kiểm chứng bản bàn giao và tài liệu học (07/10/2026)
+
+- Yêu cầu/tham chiếu: sprint M3→M7; M7 và chuẩn bị Final Audit, không thêm chức năng.
+- Mục đích: lecturer clone/cài/chạy lại được, kết quả kiểm chứng rõ mức bằng chứng, người học có tài liệu học và debug từ source thật.
+- Đầu ra AI sử dụng: README cuối; TEST_MATRIX với T01–T18 và D01; LEARNING_MAP có 6 luồng × 5 câu hỏi, 6 bài đổi yêu cầu chưa triển khai; cập nhật RTM; DEBUG_LOG bổ sung lỗi lịch sử có nguồn. Không sửa source/dependency trong M7.
+- Điều chỉnh: chỉ ghi PASS cho mức đã kiểm chứng; R09 vẫn PARTIAL/chờ bố trí native. Một checklist điện thoại cuối. Không tạo APK, không thêm framework test, script kiểm tra tạm vẫn ở ngoài repo.
+- Bản clone sạch: C:\Users\LENOVO\AppData\Local\Temp\mma301-release-20261007-71c0836, clone origin/main SHA 71c083603c6b9a5fcb269f01d9a55b1e5358f55a. npm ci mã 0, thêm 485 gói/audit 486; không sao chép node_modules hay file secret.
+- Kiểm chứng clone: expo install --check đạt; expo-doctor 21/21; expo config public SDK 57.0.0; Metro cổng 8086 báo running; Android HTTP 200/5.028.952 byte, iOS HTTP 200/5.026.779 byte; 22 nhóm logic đạt. Dừng Metro chủ động sau kiểm tra.
+- Kiểm chứng repo chính: chạy lại 22 nhóm (có cả bộ lọc rỗng ngay khi chưa chọn gì); UTF-8/code fence/link của 7 tài liệu; phần đầu AI log M0–M2 giữ nguyên từng nội dung sau chuẩn hóa CRLF/LF; git diff --check đạt.
+- Rà source: import/bundle đúng; không mutation array; key/empty/extraData đủ; chỉ helper gọi AsyncStorage, keys không lặp; try/catch và fallback; Provider/route/controlled inputs đúng. Không thấy mẫu secret phổ biến hoặc file secret trong phạm vi rà; không tuyên bố kiểm toán toàn lịch sử. Chỉ có console.warn storage trong __DEV__.
+- Dependency audit thực tế: npm audit --json mã 1, 22 mục gồm 7 moderate/15 high/0 critical. Các đề xuất có cả Expo 44.0.6 và RN 0.72.17 ngoài baseline; một số gói báo có bản sửa. Chưa sửa và chưa chứng minh mọi mục vô hại. Không chạy audit fix --force; không nâng/hạ SDK. Chi tiết ở TEST_MATRIX.
+- Lỗi thật: D01 script đọc style sai, D02 newline dư đã sửa/kiểm tra lại; D03 lệch bản vá Expo và D04 UTF-16 là lỗi lịch sử có evidence. Chưa phát hiện application defect trong phạm vi tự động. uuid deprecated và audit vẫn được giữ làm giới hạn, không nói đã fix.
+- Giới hạn: script mô phỏng hooks/UI/storage, dùng StackRouter thật; không thay UI native hoặc đĩa thật. Cảnh báo do fault injection không phải bug thực tế. Không có xác nhận người học chạm thiết bị ở sprint này.
+- Người học còn phải: checklist cuối TEST_MATRIX trên điện thoại, học source theo LEARNING_MAP, giải thích WHY/WHAT/FLOW/FAILURE và tự thử change request sau sprint. Sáu bài diễn tập mới chỉ phân tích tác động, chưa triển khai.

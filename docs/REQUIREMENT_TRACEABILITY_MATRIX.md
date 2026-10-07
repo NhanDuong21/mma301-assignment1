@@ -1,6 +1,6 @@
 # Bảng đối chiếu yêu cầu với mã nguồn
 
-Cập nhật M6, 07/10/2026. PASS ở đây là mức bằng chứng tự động/mã nguồn được ghi rõ; không có nghĩa đã test giao diện native. PARTIAL nghĩa còn thiếu bằng chứng trực quan cần thiết. Không có xác nhận điện thoại trong sprint này.
+Cập nhật M7, 07/10/2026. PASS ở đây là mức bằng chứng tự động/mã nguồn được ghi rõ; không có nghĩa đã test giao diện native. PARTIAL nghĩa còn thiếu bằng chứng trực quan cần thiết. Không có xác nhận điện thoại trong sprint này.
 
 | Mã | Yêu cầu | Cách triển khai | Tệp / hàm làm bằng chứng | Kiểm tra và kết quả | Trạng thái |
 |---|---|---|---|---|---|
@@ -20,7 +20,8 @@ Cập nhật M6, 07/10/2026. PASS ở đây là mức bằng chứng tự độn
 - M6: 22 nhóm kiểm tra đạt bằng script ngoài repo `node "$env:TEMP\mma301-sprint-check.cjs" "$PWD"`. Script nạp source thật bằng Babel, mô phỏng hooks/native UI/AsyncStorage; bài tích hợp dùng StackRouter thật. Đây không phải React renderer hay kiểm thử end-to-end native.
 - M5: Android bundle 5.028.967 byte, iOS 5.026.794 byte, HTTP 200; Expo doctor 21/21.
 - M6 không sửa source hoặc dependency sau gate M5; chạy lại toàn bộ logic tích hợp và kiểm tra tài liệu.
-- Các bài điện thoại sẽ tập hợp thành một checklist cuối ở M7; không gán PASS native cho bất kỳ dòng nào.
+- M7: clone sạch tại M6 `71c0836`, npm ci/check/doctor 21/21/config/Metro/hai bundle và 22 nhóm logic đạt. Source/dependency không đổi trong M7. Cài mới không cần file bí mật hoặc node_modules cũ.
+- Các ca T01–T18, D01 và checklist điện thoại ở [TEST_MATRIX.md](TEST_MATRIX.md); không gán PASS native cho bất kỳ dòng nào. npm audit còn 22 mục, ghi riêng giới hạn dependency.
 
 ## Ai sở hữu dữ liệu?
 
