@@ -1,6 +1,6 @@
 # MMA301 — Bài tập 1: Ứng dụng hồ sơ và hoạt động
 
-Giai đoạn hiện tại: **M3 — Hồ sơ dùng chung, biểu mẫu và kiểm tra dữ liệu**.
+Giai đoạn hiện tại: **M4 — Danh sách hoạt động tương tác**.
 
 ## Cài đặt và chạy
 
@@ -33,7 +33,7 @@ ProfileContext giữ `{ name, bio }`, mặc định Student / MMA301 learner. Pr
 
 EditProfile tạo bản nháp khi mở. Mỗi TextInput có `value` và `onChangeText`. Lưu → kiểm tra → sai thì hiện lỗi và ở lại; đúng thì tạo hồ sơ mới rồi quay lại. Hủy/quay lại bỏ bản nháp. Tên sau trim dài 2–50 ký tự; giới thiệu tối đa 160; khi lưu bỏ khoảng trắng hai đầu. Độ dài dùng JavaScript `length` (đơn vị UTF-16).
 
-ThemeContext chia sẻ chế độ sáng/tối và màu cho màn hình, ô nhập, lỗi và thanh điều hướng. State vẫn ở bộ nhớ: khởi động lại trở về hồ sơ mặc định và Light. Lưu dữ liệu thuộc M5. Danh sách hoạt động thuộc M4.
+ThemeContext chia sẻ chế độ sáng/tối và màu cho màn hình, ô nhập, lỗi và thanh điều hướng. State vẫn ở bộ nhớ: khởi động lại trở về hồ sơ mặc định và Light. Lưu dữ liệu thuộc M5. Danh sách hoạt động đã triển khai ở M4.
 
 ## Kiểm tra
 
@@ -45,3 +45,12 @@ npx expo-doctor
 M3: sáu nhóm kiểm tra logic bằng mock chạy đạt; Android/iOS bundle HTTP 200; doctor 21/21; kiểm tra dependency đạt. Xem chi tiết và giới hạn trong [nhật ký AI](docs/AI_USAGE_LOG.md), [nhật ký lỗi](docs/DEBUG_LOG.md).
 
 Kiểm tra điện thoại đang chờ người học: năm màn hình, nhập sai/đúng, Hủy, quay lại hệ thống, cuộn khi mở bàn phím và màu sáng/tối. Kết quả script không chứng minh UI native đã chạy trên thiết bị.
+
+
+## Danh sách hoạt động (M4)
+
+Sáu mục trong `src/data/activities.js` có ID duy nhất, không đổi theo vị trí. `ActivityScreen` giữ `selectedIds` và bộ lọc trong state cục bộ. `FlatList` nhận `data` sau lọc, `renderItem` tạo ActivityItem, `keyExtractor` lấy ID và `extraData` báo thay đổi lựa chọn. Chọn dùng mảng mới với `...`; bỏ chọn dùng `filter`. Không sửa trực tiếp mảng cũ.
+
+Bật “Chỉ hiển thị đã chọn” lúc chưa chọn gì sẽ đưa `data` về rỗng, hiển thị `ListEmptyComponent`. Số đã chọn tính từ toàn bộ lựa chọn. Quay lại Home làm Activity bị gỡ khỏi stack; mở Activity lại sẽ khởi tạo lựa chọn/bộ lọc mới. M4 không lưu lựa chọn.
+
+M4: 9 nhóm logic đạt (gồm hồi quy M3), doctor 21/21, dependency phù hợp và hai bundle đạt. Thao tác danh sách/khả năng cuộn trên điện thoại vẫn chờ người học xác nhận.

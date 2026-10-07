@@ -325,3 +325,15 @@ Kiểm tra số học độ tương phản của chữ chính/phụ trên backgr
 - Lỗi thật: D01 trong DEBUG_LOG — script đọc sai vị trí màu trong mảng style; sửa cách kết hợp style, chạy lại cả 6 nhóm đạt. Metro có cảnh báo biến môi trường NO_COLOR/FORCE_COLOR, không ảnh hưởng bundle; không phải lỗi ứng dụng.
 - Giới hạn: chưa persistence; kiểm tra ký tự theo UTF-16; chưa xác minh bàn phím/gesture/hiển thị native.
 - Người học còn phải: tự test toàn ứng dụng trên điện thoại cuối sprint, giải thích controlled input và vì sao Cancel không thay đổi Context. AI chưa có bằng chứng kiểm tra điện thoại.
+
+## M4 — Danh sách hoạt động tương tác (07/10/2026)
+
+- Yêu cầu/tham chiếu: sprint M3→M7, phần M4; kế tiếp M3 đã kiểm tra và đẩy lên remote.
+- Mục đích: học FlatList, key ổn định, state cục bộ, cập nhật mảng bất biến và trạng thái rỗng thật.
+- Đầu ra AI sử dụng: activities.js (6 mục), ActivityItem nhận props và ActivityScreen dùng FlatList, công tắc lọc, số đã chọn.
+- Điều chỉnh: mô tả tiếng Việt, trạng thái chọn bằng chữ/viền và accessibilityState; không thêm thư viện, không lưu lựa chọn.
+- Luồng: nhấn item → toggleActivity → mảng ID mới → tính danh sách lọc → FlatList nhận data/extraData → item và số lượng cập nhật. Bỏ chọn mục cuối khi đang lọc → thông báo rỗng.
+- Kiểm chứng: script ngoài repo đạt 9 nhóm (6 nhóm M3 + dữ liệu/key, chọn/bỏ chọn/bộ lọc/rỗng/bất biến, item/theme). `expo install --check` đạt; doctor 21/21; Android/iOS bundle HTTP 200; `git diff --check` đạt.
+- Lỗi thật: chưa phát hiện lỗi ứng dụng mới qua các kiểm tra trên. Các ca kiểm tra trạng thái rỗng là chủ động thử yêu cầu, không phải defect.
+- Giới hạn: React hooks và native component được mô phỏng; chưa đo hiệu năng/cuộn/nhấn trên thiết bị. Selection bị xóa khi màn hình được gỡ khỏi stack.
+- Người học còn phải: kiểm tra danh sách trên điện thoại trong checklist cuối; giải thích data, renderItem, keyExtractor, extraData, ListEmptyComponent và vì sao không push/splice state.
