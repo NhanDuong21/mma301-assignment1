@@ -337,3 +337,16 @@ Kiểm tra số học độ tương phản của chữ chính/phụ trên backgr
 - Lỗi thật: chưa phát hiện lỗi ứng dụng mới qua các kiểm tra trên. Các ca kiểm tra trạng thái rỗng là chủ động thử yêu cầu, không phải defect.
 - Giới hạn: React hooks và native component được mô phỏng; chưa đo hiệu năng/cuộn/nhấn trên thiết bị. Selection bị xóa khi màn hình được gỡ khỏi stack.
 - Người học còn phải: kiểm tra danh sách trên điện thoại trong checklist cuối; giải thích data, renderItem, keyExtractor, extraData, ListEmptyComponent và vì sao không push/splice state.
+
+## M5 — Lưu trữ, khôi phục và xử lý dữ liệu hỏng (07/10/2026)
+
+- Yêu cầu/tham chiếu: sprint M3→M7, phần M5; M4 đã qua gate.
+- Mục đích: giữ hồ sơ/theme qua các lần mở app và hiểu thứ tự đọc trước, ghi sau.
+- Đầu ra AI sử dụng: appStorage tập trung hai khóa và JSON try/catch; LoadingScreen; StorageNotice; effect hydrate/lưu trong hai Provider; isValidProfile kiểm tra kiểu trước khi dùng dữ liệu.
+- Điều chỉnh: Expo cài AsyncStorage 2.2.0; không nâng Expo 57.0.27/React 19.2.3/RN 0.86.3. Không tự ghi mặc định cả khi đọc lỗi; ghi tuần tự cùng khóa tránh race; cleanup effect bỏ cập nhật kết quả đã lỗi thời; lần thay đổi kế tiếp thử lưu lại nếu lần trước thất bại.
+- Luồng: Theme đọc → Profile đọc → mở navigator; người dùng sửa → Context đổi → effect ghi JSON; mở phiên mới → đọc/validate/restore; lỗi → mặc định hoặc giữ state hiện tại và báo chưa lưu.
+- Kiểm chứng: 21 nhóm trong script ngoài repo đạt, gồm toàn bộ hồi quy M3/M4; first run; save/remount restore; đọc bị trì hoãn và không ghi sớm; JSON hỏng, null, array, sai kiểu/tên/bio/theme; read/write failure; ghi lại thành công; ghi tuần tự, giá trị mới nhất thắng; Provider từ chối hồ sơ invalid. Có 15 cảnh báo do cố ý mô phỏng lỗi; không phải bug mới.
+- `npx expo install --check` đạt; doctor 21/21; `npm ls --depth=0` xác nhận nền không đổi; Android/iOS bundle HTTP 200; `git diff --check` đạt.
+- Lỗi thật: chưa phát hiện lỗi mới qua những kiểm tra này. npm install báo 22 cảnh báo bảo mật (7 vừa, 15 cao); sẽ phân tích trong M7, không chạy audit fix --force.
+- Giới hạn: bài thử dùng mock AsyncStorage và mô phỏng remount, không chứng minh dữ liệu native còn sau khi hệ điều hành tắt app. Không lưu lựa chọn hoạt động, không mã hóa, không có nút thử lại riêng.
+- Người học còn phải: kiểm tra Save/theme → đóng/mở app trên điện thoại, đọc hiểu useEffect/useRef/hydrated và đường lỗi trong checklist cuối. Nhật ký M2 giữ nguyên vì hành vi khi đó chỉ nằm trong bộ nhớ.

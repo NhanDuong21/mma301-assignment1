@@ -12,3 +12,9 @@ export function validateProfile({ name, bio }) {
 
   return errors;
 }
+
+export function isValidProfile(value) {
+  return value !== null && typeof value === 'object' && !Array.isArray(value)
+    && typeof value.name === 'string' && typeof value.bio === 'string'
+    && Object.keys(validateProfile(value)).length === 0;
+}

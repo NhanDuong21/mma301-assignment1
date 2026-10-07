@@ -1,4 +1,7 @@
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useRef, useState } from 'react';
+
+import LoadingScreen from '../components/LoadingScreen';
+import { readStoredValue, STORAGE_KEYS, writeStoredValue } from '../storage/appStorage';
 
 export const ThemeContext = createContext(null);
 
@@ -24,15 +27,45 @@ const darkColors = {
 
 export function ThemeProvider({ children }) {
   const [themeMode, setThemeMode] = useState('light');
+  const [hydrated, setHydrated] = useState(false);
+  const [storageError, setStorageError] = useState(null);
+  const lastRequestedValue = useRef('light');
   const isDark = themeMode === 'dark';
   const colors = isDark ? darkColors : lightColors;
+
+  useEffect(() => {
+    let active = true;
+    async function hydrate() {
+      const result = await readStoredValue(STORAGE_KEYS.THEME, 'light', (value) => value === 'light' || value === 'dark');
+      if (!active) return;
+      lastRequestedValue.current = result.value;
+      setThemeMode(result.value);
+      setStorageError(result.error);
+      setHydrated(true);
+    }
+    hydrate();
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    // Đọc xong mới được ghi; giá trị vừa khôi phục không cần ghi lại.
+    if (!hydrated || lastRequestedValue.current === themeMode) return;
+    lastRequestedValue.current = themeMode;
+    let active = true;
+    writeStoredValue(STORAGE_KEYS.THEME, themeMode).then((error) => {
+      if (active) setStorageError(error);
+    });
+    return () => { active = false; };
+  }, [themeMode, hydrated]);
 
   function toggleTheme() {
     setThemeMode((previousMode) => previousMode === 'light' ? 'dark' : 'light');
   }
 
+  if (!hydrated) return <LoadingScreen colors={colors} message="Đang đọc giao diện đã lưu…" />;
+
   return (
-    <ThemeContext.Provider value={{ themeMode, isDark, colors, toggleTheme }}>
+    <ThemeContext.Provider value={{ themeMode, isDark, colors, toggleTheme, storageError }}>
       {children}
     </ThemeContext.Provider>
   );

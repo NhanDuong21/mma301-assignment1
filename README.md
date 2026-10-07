@@ -1,6 +1,6 @@
 # MMA301 — Bài tập 1: Ứng dụng hồ sơ và hoạt động
 
-Giai đoạn hiện tại: **M4 — Danh sách hoạt động tương tác**.
+Giai đoạn hiện tại: **M5 — Lưu và khôi phục hồ sơ, giao diện**.
 
 ## Cài đặt và chạy
 
@@ -33,7 +33,7 @@ ProfileContext giữ `{ name, bio }`, mặc định Student / MMA301 learner. Pr
 
 EditProfile tạo bản nháp khi mở. Mỗi TextInput có `value` và `onChangeText`. Lưu → kiểm tra → sai thì hiện lỗi và ở lại; đúng thì tạo hồ sơ mới rồi quay lại. Hủy/quay lại bỏ bản nháp. Tên sau trim dài 2–50 ký tự; giới thiệu tối đa 160; khi lưu bỏ khoảng trắng hai đầu. Độ dài dùng JavaScript `length` (đơn vị UTF-16).
 
-ThemeContext chia sẻ chế độ sáng/tối và màu cho màn hình, ô nhập, lỗi và thanh điều hướng. State vẫn ở bộ nhớ: khởi động lại trở về hồ sơ mặc định và Light. Lưu dữ liệu thuộc M5. Danh sách hoạt động đã triển khai ở M4.
+ThemeContext chia sẻ chế độ sáng/tối và màu cho màn hình, ô nhập, lỗi và thanh điều hướng. Từ M5, khởi động lại khôi phục hồ sơ và theme đã lưu. Nếu chưa có dữ liệu, dùng hồ sơ mặc định và Light. Danh sách hoạt động đã triển khai ở M4.
 
 ## Kiểm tra
 
@@ -54,3 +54,16 @@ Sáu mục trong `src/data/activities.js` có ID duy nhất, không đổi theo 
 Bật “Chỉ hiển thị đã chọn” lúc chưa chọn gì sẽ đưa `data` về rỗng, hiển thị `ListEmptyComponent`. Số đã chọn tính từ toàn bộ lựa chọn. Quay lại Home làm Activity bị gỡ khỏi stack; mở Activity lại sẽ khởi tạo lựa chọn/bộ lọc mới. M4 không lưu lựa chọn.
 
 M4: 9 nhóm logic đạt (gồm hồi quy M3), doctor 21/21, dependency phù hợp và hai bundle đạt. Thao tác danh sách/khả năng cuộn trên điện thoại vẫn chờ người học xác nhận.
+
+
+## Lưu trữ và khởi động (M5)
+
+`src/storage/appStorage.js` là nơi duy nhất gọi AsyncStorage 2.2.0, dùng hai khóa `mma301.profile` và `mma301.theme`. ThemeProvider đọc trước, sau đó ProfileProvider đọc hồ sơ; trong lúc chờ chỉ hiện màn hình tải. Chỉ sau khi cả hai hoàn tất mới mở Home.
+
+Mỗi Provider có cờ `hydrated` và một ref nhớ giá trị đã yêu cầu ghi. Không ghi mặc định trước khi đọc, cũng không tự ghi lại giá trị vừa khôi phục. Khi người dùng thay đổi state, effect mới lưu JSON. Các lần ghi cùng khóa chạy tuần tự. Hai Context vẫn chia sẻ state trong bộ nhớ; AsyncStorage giữ bản sao qua lần mở app sau.
+
+Khóa không tồn tại là lần chạy đầu bình thường. JSON hỏng, theme ngoài light/dark, hồ sơ sai kiểu hoặc lỗi đọc sẽ dùng mặc định và hiện cảnh báo. Lỗi ghi không chặn thao tác: state mới vẫn hiện, nhưng cảnh báo cho biết chưa lưu trên máy. Lần thay đổi tiếp theo thử ghi lại; thành công thì xóa cảnh báo. AsyncStorage không mã hóa, không dùng lưu bí mật.
+
+Chọn hoạt động vẫn chỉ thuộc ActivityScreen và không được lưu. Đóng app ngay khi vừa sửa có thể ngắt lần ghi đang chạy; khi thử khôi phục hãy chờ thao tác lưu hoàn tất, không dùng Fast Refresh thay cho khởi động lại.
+
+M5: 21 nhóm logic/fault injection đạt; Android/iOS bundle HTTP 200; doctor 21/21; dependency phù hợp. Lưu trữ native và mở lại app thật vẫn cần người học kiểm chứng.
